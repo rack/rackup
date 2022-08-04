@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'rack/handler'
-
 module Rackup
   # *Handlers* connect web servers with Rack.
   #
@@ -11,9 +9,26 @@ module Rackup
   # A second optional hash can be passed to include server-specific
   # configuration.
   module Handler
+    @handlers = {}
+
+    # Register a named handler class.
+    def self.register(name, klass)
+      if klass.is_a?(String)
+        warn "Calling Rackup::Handler.register with a string is deprecated, use the class/module itself.", uplevel: 1
+
+        klass = self.const_get(klass, false)
+      end
+
+      name = name.to_sym
+
+      @handlers[name] = klass
+    end
+
     def self.[](name)
+      name = name.to_sym
+
       begin
-        Rack::Handler[name] || self.const_get(name, false)
+        @handlers[name] || self.const_get(name, false)
       rescue NameError
         # Ignore.
       end
@@ -28,15 +43,13 @@ module Rackup
         return server
       end
 
-      require_handler("rack/handler", name)
+      begin
+        require_handler("rackup/handler", name)
+      rescue LoadError
+        require_handler("rack/handler", name)
+      end
 
       return self[name]
-    end
-
-    def self.register(name, klass)
-      name = name.to_sym
-
-      Rack::Handler.register(name, klass)
     end
 
     RACK_HANDLER = 'RACK_HANDLER'
