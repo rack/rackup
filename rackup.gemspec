@@ -11,8 +11,7 @@ Gem::Specification.new do |spec|
   spec.license = "MIT"
 
   spec.files = Dir.glob('{bin,lib}/**/*', base: __dir__)
-
-  spec.require_path = 'lib'
+  spec.executables = ["rackup"]
 
   spec.homepage = 'https://github.com/rack/rackup'
 
