@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem "rack", git: "https://github.com/rack/rack.git", branch: "extract-rackup"
+gem "rack", "3.0.0.beta1"
 
 group :maintenance, optional: true do
   gem "bake"
