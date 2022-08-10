@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.summary = "A general server command for Rack applications."
   spec.license = "MIT"
 
-  spec.files = Dir.glob('{bin,lib}/**/*', base: __dir__)
+  spec.files = Dir.glob('{bin,lib}/**/*', base: __dir__) + ["LICENSE.md"]
   spec.executables = ["rackup"]
 
   spec.homepage = 'https://github.com/rack/rackup'
