@@ -93,18 +93,23 @@ module Rackup
 
         status, headers, body = @app.call(env)
         begin
-          res.status = status.to_i
-          io_lambda = nil
+          res.status = status
+
+          if value = headers[RACK_HIJACK]
+            io_lambda = value
+          elsif !body.respond_to?(:to_path) && !body.respond_to?(:each)
+            io_lambda = body
+          end
+
+          if value = headers.delete('set-cookie')
+            res.cookies.concat(Array(value))
+          end
+
           headers.each { |key, value|
-            if key == RACK_HIJACK
-              io_lambda = value
-            elsif key == "set-cookie"
-              res.cookies.concat(Array(value))
-            else
-              # Since WEBrick won't accept repeated headers,
-              # merge the values per RFC 1945 section 4.2.
-              res[key] = Array(value).join(", ")
-            end
+            # Since WEBrick won't accept repeated headers,
+            # merge the values per RFC 1945 section 4.2.
+            value = value.join(", ") if Array === value
+            res[key] = value
           }
 
           if io_lambda
