@@ -2,8 +2,6 @@
 
 `rackup` provides a command line interface for running a Rack-compatible application.
 
-[![Development Status](https://github.com/rack/rackup/workflows/Development/badge.svg)](https://github.com/rack/rackup/actions?workflow=Development)
-
 ## Installation
 
 ```bash
