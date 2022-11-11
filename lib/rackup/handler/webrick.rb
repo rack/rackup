@@ -106,6 +106,9 @@ module Rackup
           end
 
           headers.each { |key, value|
+            # Skip keys starting with rack., per Rack SPEC
+            next if key.start_with?('rack.')
+
             # Since WEBrick won't accept repeated headers,
             # merge the values per RFC 1945 section 4.2.
             value = value.join(", ") if Array === value
