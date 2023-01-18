@@ -17,7 +17,7 @@ jobs:
       matrix:
         os:
           - ubuntu
-          # - macos
+          - macos
         
         ruby:
           - "2.7"
@@ -31,9 +31,6 @@ jobs:
       with:
         ruby-version: ${{matrix.ruby}}
         bundler-cache: true
-    
-    - name: Installing packages
-      run: sudo apt-get install libfcgi-dev libmemcached-dev
     
     - name: Run tests
       timeout-minutes: 10

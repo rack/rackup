@@ -4,5 +4,10 @@
 # Copyright, 2022-2023, by Samuel Williams.
 
 module Rackup
-  VERSION = "1.0.0"
+  module Handler
+    class RegisteringMyself
+    end
+
+    register :registering_myself, RegisteringMyself
+  end
 end

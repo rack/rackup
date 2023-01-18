@@ -3,6 +3,8 @@
 # Released under the MIT License.
 # Copyright, 2022-2023, by Samuel Williams.
 
-module Rackup
-  VERSION = "1.0.0"
+unless YAML.respond_to?(:unsafe_load)
+  def YAML.unsafe_load(body)
+    load(body)
+  end
 end
