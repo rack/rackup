@@ -14,6 +14,8 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir['{bin,lib}/**/*', '*.md']
 
+  spec.executables = ["rackup"]
+
   spec.required_ruby_version = ">= 2.4.0"
 
   spec.add_dependency "rack", ">= 3"
