@@ -1,4 +1,3 @@
-rack-2.2:
+rack:
   url: https://github.com/rack/rack.git
   command: bundle exec rake test
-  branch: 2-2-stable
