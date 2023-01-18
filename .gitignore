@@ -1,2 +1,5 @@
-Gemfile.lock
-/pkg
+/.bundle/
+/pkg/
+/gems.locked
+/.covered.db
+/external

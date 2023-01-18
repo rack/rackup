@@ -2,11 +2,11 @@
 
 `rackup` provides a command line interface for running a Rack-compatible application.
 
-[![Test Status](https://github.com/rack/rackup/workflows/Test/badge.svg)](https://github.com/rack/rackup/actions?workflow=Test)
+[![Development Status](https://github.com/rack/rackup/workflows/Test/badge.svg)](https://github.com/rack/rackup/actions?workflow=Test)
 
 ## Installation
 
-```bash
+``` bash
 $ gem install rackup
 ```
 
@@ -14,7 +14,7 @@ $ gem install rackup
 
 In a directory with your `config.ru` simply run the command:
 
-```bash
+``` bash
 $ rackup
 ```
 
@@ -29,4 +29,3 @@ We welcome contributions to this project.
 3.  Commit your changes (`git commit -am 'Add some feature'`).
 4.  Push to the branch (`git push origin my-new-feature`).
 5.  Create new Pull Request.
-
