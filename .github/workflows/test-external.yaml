@@ -17,7 +17,6 @@ jobs:
       matrix:
         os:
           - ubuntu
-          - macos
         
         ruby:
           - "2.7"
@@ -31,6 +30,10 @@ jobs:
       with:
         ruby-version: ${{matrix.ruby}}
         bundler-cache: true
+    
+    - name: Install dependencies
+      timeout-minutes: 5
+      run: sudo apt-get install -y ragel
     
     - name: Run tests
       timeout-minutes: 10
