@@ -3,7 +3,7 @@
 Copyright, 2007-2009, by Leah Neukirchen.  
 Copyright, 2008, by Marc-André Cournoyer.  
 Copyright, 2009, by Aaron Pfeifer.  
-Copyright, 2009, by Graham Batty.  
+Copyright, 2009-2010, by Megan Batty.  
 Copyright, 2009-2010, by Michael Fellinger.  
 Copyright, 2009, by Genki Takiuchi.  
 Copyright, 2009, by Joshua Peek.  
@@ -16,7 +16,6 @@ Copyright, 2010, by Loren Segal.
 Copyright, 2010, by Andrew Bortz.  
 Copyright, 2010, by John Barnette.  
 Copyright, 2010, by John Sumsion.  
-Copyright, 2010, by Graham.  
 Copyright, 2011-2018, by Aaron Patterson.  
 Copyright, 2011, by Konstantin Haase.  
 Copyright, 2011, by Blake Mizerany.  
