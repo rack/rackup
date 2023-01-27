@@ -11,28 +11,11 @@ require 'rack/constants'
 require_relative '../handler'
 require_relative '../version'
 
-# This monkey patch allows for applications to perform their own chunking
-# through WEBrick::HTTPResponse if rack is set to true.
-class WEBrick::HTTPResponse
-  attr_accessor :rack
-
-  alias _rack_setup_header setup_header
-  def setup_header
-    app_chunking = rack && @header['transfer-encoding'] == 'chunked'
-
-    @chunked = app_chunking if app_chunking
-
-    _rack_setup_header
-
-    @chunked = false if app_chunking
-  end
-end
+require_relative '../stream'
 
 module Rackup
   module Handler
     class WEBrick < ::WEBrick::HTTPServlet::AbstractServlet
-      include Rack
-      
       def self.run(app, **options)
         environment  = ENV['RACK_ENV'] || 'development'
         default_host = environment == 'development' ? 'localhost' : nil
@@ -73,43 +56,75 @@ module Rackup
         @app = app
       end
 
+      # This handles mapping the WEBrick request to a Rack input stream.
+      class Input
+        include Stream::Reader
+
+        def initialize(request)
+          @request = request
+
+          @reader = Fiber.new do
+            @request.body do |chunk|
+              Fiber.yield(chunk)
+            end
+
+            Fiber.yield(nil)
+
+            # End of stream:
+            @reader = nil
+          end
+        end
+
+        def close
+          @request = nil
+          @reader = nil
+        end
+
+        private
+
+        # Read one chunk from the request body.
+        def read_next
+          @reader&.resume
+        end
+      end
+
       def service(req, res)
-        res.rack = true
         env = req.meta_vars
         env.delete_if { |k, v| v.nil? }
 
-        rack_input = StringIO.new(req.body.to_s)
-        rack_input.set_encoding(Encoding::BINARY)
+        input = Input.new(req)
 
         env.update(
-          RACK_INPUT        => rack_input,
-          RACK_ERRORS       => $stderr,
-          RACK_URL_SCHEME   => ["yes", "on", "1"].include?(env[HTTPS]) ? "https" : "http",
-          RACK_IS_HIJACK    => true,
+          ::Rack::RACK_INPUT => input,
+          ::Rack::RACK_ERRORS => $stderr,
+          ::Rack::RACK_URL_SCHEME => ["yes", "on", "1"].include?(env[::Rack::HTTPS]) ? "https" : "http",
+          ::Rack::RACK_IS_HIJACK => true,
         )
 
-        env[QUERY_STRING] ||= ""
-        unless env[PATH_INFO] == ""
-          path, n = req.request_uri.path, env[SCRIPT_NAME].length
-          env[PATH_INFO] = path[n, path.length - n]
+        env[::Rack::QUERY_STRING] ||= ""
+        unless env[::Rack::PATH_INFO] == ""
+          path, n = req.request_uri.path, env[::Rack::SCRIPT_NAME].length
+          env[::Rack::PATH_INFO] = path[n, path.length - n]
         end
-        env[REQUEST_PATH] ||= [env[SCRIPT_NAME], env[PATH_INFO]].join
+        env[::Rack::REQUEST_PATH] ||= [env[::Rack::SCRIPT_NAME], env[::Rack::PATH_INFO]].join
 
         status, headers, body = @app.call(env)
         begin
           res.status = status
 
-          if value = headers[RACK_HIJACK]
+          if value = headers[::Rack::RACK_HIJACK]
             io_lambda = value
+            body = nil
           elsif !body.respond_to?(:to_path) && !body.respond_to?(:each)
             io_lambda = body
+            body = nil
           end
 
           if value = headers.delete('set-cookie')
             res.cookies.concat(Array(value))
           end
 
-          headers.each { |key, value|
+          headers.each do |key, value|
             # Skip keys starting with rack., per Rack SPEC
             next if key.start_with?('rack.')
 
@@ -117,22 +132,27 @@ module Rackup
             # merge the values per RFC 1945 section 4.2.
             value = value.join(", ") if Array === value
             res[key] = value
-          }
+          end
 
           if io_lambda
-            rd, wr = IO.pipe
-            res.body = rd
-            res.chunked = true
-            io_lambda.call wr
+            protocol = headers['rack.protocol'] || headers['upgrade']
+
+            if protocol
+              # Set all the headers correctly for an upgrade response:
+              res.upgrade!(protocol)
+            end
+            res.body = io_lambda
           elsif body.respond_to?(:to_path)
             res.body = ::File.open(body.to_path, 'rb')
           else
-            body.each { |part|
-              res.body << part
-            }
+            buffer = String.new
+            body.each do |part|
+              buffer << part
+            end
+            res.body = buffer
           end
         ensure
-          body.close if body.respond_to? :close
+          body.close if body.respond_to?(:close)
         end
       end
     end
