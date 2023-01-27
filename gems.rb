@@ -24,5 +24,3 @@ group :test do
   gem "bake-test"
   gem "bake-test-external"
 end
-
-gem "webrick", git: "https://github.com/ruby/webrick"
