@@ -95,10 +95,10 @@ module Rackup
         input = Input.new(req)
 
         env.update(
-          ::Rack::RACK_INPUT        => input,
-          ::Rack::RACK_ERRORS       => $stderr,
-          ::Rack::RACK_URL_SCHEME   => ["yes", "on", "1"].include?(env[::Rack::HTTPS]) ? "https" : "http",
-          ::Rack::RACK_IS_HIJACK    => true,
+          ::Rack::RACK_INPUT => input,
+          ::Rack::RACK_ERRORS => $stderr,
+          ::Rack::RACK_URL_SCHEME => ["yes", "on", "1"].include?(env[::Rack::HTTPS]) ? "https" : "http",
+          ::Rack::RACK_IS_HIJACK => true,
         )
 
         env[::Rack::QUERY_STRING] ||= ""
