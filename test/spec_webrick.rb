@@ -196,6 +196,30 @@ describe Rackup::Handler::WEBrick do
     }
   end
 
+  it "produce correct HTTP semantics with upgrade response" do
+    app = proc do |env|
+      body = proc do |io|
+        io.write "hello"
+        io.close
+      end
+
+      [101, {"connection" => "upgrade", "upgrade" => "text"}, body]
+    end
+
+    @server.mount "/app", Rackup::Handler::WEBrick, Rack::Lint.new(app)
+
+    TCPSocket.open(@host, @port) do |socket|
+      socket.write "GET /app HTTP/1.1\r\n"
+      socket.write "Host: #{@host}\r\n\r\n"
+
+      response = socket.read
+      response.must_match(/HTTP\/1.1 101 Switching Protocols/)
+      response.must_match(/Connection: upgrade/)
+      response.must_match(/Upgrade: text/)
+      response.must_match(/hello/)
+    end
+  end
+
   after do
     @status_thread.join
     @server.shutdown

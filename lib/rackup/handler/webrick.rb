@@ -135,7 +135,9 @@ module Rackup
           end
 
           if io_lambda
-            if protocol = headers['rack.protocol']
+            protocol = headers['rack.protocol'] || headers['upgrade']
+
+            if protocol
               # Set all the headers correctly for an upgrade response:
               res.upgrade!(protocol)
             end
