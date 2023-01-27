@@ -16,28 +16,6 @@ require_relative '../stream'
 module Rackup
   module Handler
     class WEBrick < ::WEBrick::HTTPServlet::AbstractServlet
-      module UpgradeResponse
-        attr_accessor :stream
-
-        def setup_header
-          if @stream
-            # Don't mess with the headers.
-          else
-            super
-          end
-        end
-
-        def send_body_proc(socket)
-          if @stream
-            @body.call(socket)
-          else
-            super
-          end
-        end
-      end
-
-      ::WEBrick::HTTPResponse.prepend(UpgradeResponse)
-
       def self.run(app, **options)
         environment  = ENV['RACK_ENV'] || 'development'
         default_host = environment == 'development' ? 'localhost' : nil
@@ -157,25 +135,19 @@ module Rackup
           end
 
           if io_lambda
-            protocol = headers['rack.protocol']
-
-            if protocol
-              res.keep_alive = false
-              res['connection'] = 'upgrade'
-              res['upgrade'] = protocol
-            else
-              res.keep_alive = false
-              res['connection'] = 'close'
+            if protocol = headers['rack.protocol']
+              # Set all the headers correctly for an upgrade response:
+              res.upgrade!(protocol)
             end
-
-            res.stream = true
             res.body = io_lambda
           elsif body.respond_to?(:to_path)
             res.body = ::File.open(body.to_path, 'rb')
           else
+            buffer = String.new
             body.each do |part|
-              res.body << part
+              buffer << part
             end
+            res.body = buffer
           end
         ensure
           body.close if body.respond_to?(:close)
