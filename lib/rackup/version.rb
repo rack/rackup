@@ -4,5 +4,5 @@
 # Copyright, 2022-2023, by Samuel Williams.
 
 module Rackup
-  VERSION = "2.1.0"
+  VERSION = "2.1.1"
 end
