@@ -21,6 +21,8 @@ jobs:
           - macos
         
         ruby:
+          - "2.5"
+          - "2.6"
           - "2.7"
           - "3.0"
           - "3.1"
@@ -38,6 +40,10 @@ jobs:
           - os: ubuntu
             ruby: head
             experimental: true
+        exclude:
+          # Not supported on macos-arm64:
+          - os: macos
+            ruby: "2.5"
     
     steps:
     - uses: actions/checkout@v3
