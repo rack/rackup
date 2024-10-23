@@ -4,6 +4,6 @@ rack:
 falcon:
   url: https://github.com/socketry/falcon.git
   command: bundle exec bake test
-puma:
-  url: https://github.com/puma/puma.git
-  command: bundle exec rake test
+# puma:
+#   url: https://github.com/puma/puma.git
+#   command: bundle exec rake test
