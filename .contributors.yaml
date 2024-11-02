@@ -44,15 +44,15 @@
     email: singpolyma@singpolyma.net
 - time: 2021-10-20T11:02:13+08:00
   author:
-    name: KS
+    name: Kang Sheng
     email: Magi-KS@users.noreply.github.com
 - time: 2021-04-29T10:47:16+09:00
   author:
-    name: Katsuhiko YOSHIDA
+    name: Katsuhiko Yoshida
     email: claddvd@gmail.com
 - time: 2021-04-28T08:51:24+09:00
   author:
-    name: Katsuhiko YOSHIDA
+    name: Katsuhiko Yoshida
     email: claddvd@gmail.com
 - time: 2020-05-25T02:14:31+12:00
   author:
@@ -168,7 +168,7 @@
     email: jftucker@gmail.com
 - time: 2015-08-30T03:36:29+02:00
   author:
-    name: deepj
+    name: Martin Hrdlicka
     email: deepjungle.maca@gmail.com
 - time: 2015-03-27T19:44:18+09:00
   author:
@@ -176,7 +176,7 @@
     email: tadashi_saito@dwango.co.jp
 - time: 2015-05-25T04:18:16+02:00
   author:
-    name: deepj
+    name: Martin Hrdlicka
     email: deepjungle.maca@gmail.com
 - time: 2015-05-26T14:18:00-07:00
   author:
@@ -204,7 +204,7 @@
     email: ujifgc@gmail.com
 - time: 2014-07-18T15:27:36-03:00
   author:
-    name: Rafael Mendonça França
+    name: Rafael França
     email: rafael.franca@plataformatec.com.br
 - time: 2014-03-27T17:24:21-04:00
   author:
@@ -252,7 +252,7 @@
     email: basv@odd-e.com
 - time: 2013-02-09T21:28:55-08:00
   author:
-    name: Postmodern
+    name: Hal Brodigan
     email: postmodern.mod3@gmail.com
 - time: 2013-01-30T13:45:32+11:00
   author:
@@ -264,7 +264,7 @@
     email: jftucker@gmail.com
 - time: 2013-01-03T12:00:27+09:00
   author:
-    name: Uchio KONDO
+    name: Uchio Kondo
     email: udzura@udzura.jp
 - time: 2012-12-28T22:50:55+00:00
   author:
@@ -428,7 +428,7 @@
     email: carllerche@mac.com
 - time: 2009-11-21T10:52:33-08:00
   author:
-    name: Yehuda Katz + Carl Lerche
+    name: Yehuda Katz
     email: ykatz+clerche@engineyard.com
 - time: 2009-09-05T13:27:50-05:00
   author:
