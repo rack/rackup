@@ -7,11 +7,11 @@
 ## Installation
 
 ``` bash
--- For Falcon
-$ gem install rackup falcon
-
 -- For Puma
 $ gem install rackup puma
+
+-- For Falcon
+$ gem install rackup falcon
 ```
 
 ## Usage
