@@ -11,7 +11,10 @@ group :maintenance, optional: true do
   gem "bake"
   gem "bake-gem"
   gem "bake-modernize"
-  gem "bake-releases"
+
+  if RUBY_VERSION >= "3.1"
+    gem "bake-releases"
+  end
 end
 
 group :doc do
