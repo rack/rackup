@@ -21,4 +21,10 @@ end
 group :test do
   gem "bake-test"
   gem "bake-test-external"
+
+  gem "webrick", "~> 1.8"
+  gem "minitest", "~> 5.0"
+  gem "minitest-global_expectations"
+  gem "minitest-sprint"
+  gem "rake"
 end
