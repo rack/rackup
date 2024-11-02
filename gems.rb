@@ -11,9 +11,7 @@ group :maintenance, optional: true do
   gem "bake"
   gem "bake-gem"
   gem "bake-modernize"
-
-  gem "rubocop", require: false
-  gem "rubocop-packaging", require: false
+  gem "bake-releases"
 end
 
 group :doc do
