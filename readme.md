@@ -48,10 +48,10 @@ $ puma ...
 
 In summary, the maintainers of `rack` recommend the following:
 
-- Libraries should not depend on `rackup` if possible. `rackup` as an executable made sense when webrick shipped with Ruby, so there was always a fallback. But that hasn't been true since Ruby 3.0.
-- Frameworks and applications should focus on providing `config.ru` files, so that users can use the webserver program of their choice directly (e.g. puma, falcon). 
-- There is still some value in the generic `rackup` and `Rackup::Handler` interfaces, but we encourage users to invoke the server command directly if possible.
-- Webrick should be avoided if possible.
+  - Libraries should not depend on `rackup` if possible. `rackup` as an executable made sense when webrick shipped with Ruby, so there was always a fallback. But that hasn't been true since Ruby 3.0.
+  - Frameworks and applications should focus on providing `config.ru` files, so that users can use the webserver program of their choice directly (e.g. puma, falcon).
+  - There is still some value in the generic `rackup` and `Rackup::Handler` interfaces, but we encourage users to invoke the server command directly if possible.
+  - Webrick should be avoided if possible.
 
 ## Contributing
 

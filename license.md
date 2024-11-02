@@ -59,6 +59,7 @@ Copyright, 2022, by Akira Matsuda.
 Copyright, 2022, by Andrew Hoglund.  
 Copyright, 2024, by Olle Jonsson.  
 Copyright, 2024, by Geremia Taglialatela.  
+Copyright, 2024, by Petrik de Heus.  
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
