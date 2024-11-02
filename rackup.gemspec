@@ -12,15 +12,16 @@ Gem::Specification.new do |spec|
 
   spec.homepage = "https://github.com/rack/rackup"
 
-  spec.files = Dir['{bin,lib}/**/*', '*.md']
+  spec.metadata = {
+    "rubygems_mfa_required" => "true",
+    "source_code_uri" => "https://github.com/rack/rackup.git",
+  }
+
+  spec.files = Dir["{bin,lib}/**/*", "*.md"]
 
   spec.executables = ["rackup"]
 
   spec.required_ruby_version = ">= 2.5"
-
-  spec.metadata = {
-    "rubygems_mfa_required" => "true"
-  }
 
   spec.add_dependency "rack", ">= 3"
   spec.add_dependency "webrick", "~> 1.8"
