@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file. For info on how to format all future additions to this file please reference [Keep A Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## v2.2.1
+
+  - Try to require `webrick` and `rackup/handler/webrick` by default, for compatibility with code that expects them to be available.
+
 ## v2.2.0
 
   - Remove old rack shims.
