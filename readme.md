@@ -24,6 +24,24 @@ $ rackup
 
 Your application should now be available locally, typically `http://localhost:9292`.
 
+### Server Handler
+
+You can also use `Rackup::Handler` to start a server programmatically:
+
+``` ruby
+require 'rackup'
+
+# Use the default server:
+handler = Rackup::Handler.default
+handler.run(app, **options)
+
+# Use a specific server:
+handler = Rackup::Handler.get('puma')
+handler.run(app, **options)
+```
+
+Do not require specific handlers or assume they will exist/work. Instead, use the `default` method to get the best available handler.
+
 ## (Soft) Deprecation
 
 For a long time, `rackup` (the executable and implementation) was part of `rack`, and `webrick` was the default server, included with Ruby. It made it easy to run a Rack application without having to worry about the details of the server - great for documentation and demos.
