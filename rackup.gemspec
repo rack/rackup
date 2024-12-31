@@ -13,6 +13,7 @@ Gem::Specification.new do |spec|
   spec.homepage = "https://github.com/rack/rackup"
 
   spec.metadata = {
+    "changelog_uri" => spec.homepage + "/blob/main/releases.md",
     "rubygems_mfa_required" => "true",
     "source_code_uri" => "https://github.com/rack/rackup.git",
   }
