@@ -525,7 +525,7 @@ describe Rackup::Server do
 
     Process.kill(:INT, $$)
     t.join
-    open(pidfile.path) { |f| f.read.must_equal $$.to_s }
+    File.open(pidfile.path) { |f| f.read.must_equal $$.to_s }
   end if RUBY_VERSION >= "2.6" && RUBY_ENGINE == "ruby"
 
   it "check pid file presence and running process" do
