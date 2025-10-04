@@ -179,7 +179,6 @@ module Rackup
     #
     # Further options available here are documented on Rackup::Server#initialize
     def self.start(options = nil)
-      normalize_port_casing(options)
       new(options).start
     end
 
@@ -232,6 +231,7 @@ module Rackup
       @ignore_options = []
 
       if options
+        normalize_port_casing(options)
         @use_default_options = false
         @options = options
         @app = options[:app] if options[:app]

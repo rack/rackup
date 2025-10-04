@@ -52,7 +52,7 @@ describe Rackup::Server do
     server.app.must_equal "FOO"
   end
 
-  it "Options#parse parses -p and --port options into :port" do
+  it "Options#parse parses -p and --port options into :Port" do
     Rackup::Server::Options.new.parse!(%w[-p 1234]).must_equal :port => '1234'
     Rackup::Server::Options.new.parse!(%w[--port 1234]).must_equal :port => '1234'
   end
@@ -482,9 +482,9 @@ describe Rackup::Server do
     t = Thread.new { server.start { |s| Thread.current[:server] = s } }
     t.join(0.01) until t[:server] && t[:server].status != :Stop
     body = if URI.respond_to?(:open)
-             URI.open("http://localhost:#{server.options[:Port]}/") { |f| f.read }
+             URI.open("http://localhost:#{server.options[:port]}/") { |f| f.read }
            else
-             open("http://localhost:#{server.options[:Port]}/") { |f| f.read }
+             open("http://localhost:#{server.options[:port]}/") { |f| f.read }
            end
     body.must_equal 'success'
 
@@ -512,7 +512,7 @@ describe Rackup::Server do
     t = Thread.new { server.start { |s| Thread.current[:server] = s } }
     t.join(0.01) until t[:server] && t[:server].status != :Stop
 
-    uri = URI.parse("https://localhost:#{server.options[:Port]}/")
+    uri = URI.parse("https://localhost:#{server.options[:port]}/")
 
     Net::HTTP.start("localhost", uri.port, use_ssl: true,
       verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
