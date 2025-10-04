@@ -23,7 +23,7 @@ module Rackup
         if !options[:BindAddress] || options[:Host]
           options[:BindAddress] = options.delete(:Host) || default_host
         end
-        options[:Port] ||= 8080
+        options[:Port] = options[:port] || 8080
         if options[:SSLEnable]
           require 'webrick/https'
         end

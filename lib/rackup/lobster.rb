@@ -75,7 +75,7 @@ if $0 == __FILE__
   require_relative 'show_exceptions'
   require_relative 'lint'
   Rackup::Server.start(
-    app: Rack::ShowExceptions.new(Rack::Lint.new(Rackup::Lobster.new)), Port: 9292
+    app: Rack::ShowExceptions.new(Rack::Lint.new(Rackup::Lobster.new)), port: 9292
   )
   # :nocov:
 end

@@ -70,7 +70,7 @@ module Rackup
           }
 
           opts.on("-p", "--port PORT", "use PORT (default: 9292)") { |port|
-            options[:Port] = port
+            options[:port] = port
           }
 
           opts.on("-O", "--option NAME[=VALUE]", "pass VALUE to the server as option NAME. If no VALUE, sets it to true. Run '#{$0} -s SERVER -h' to get a list of options for SERVER") { |name|
@@ -179,6 +179,7 @@ module Rackup
     #
     # Further options available here are documented on Rackup::Server#initialize
     def self.start(options = nil)
+      normalize_port_casing(options)
       new(options).start
     end
 
@@ -252,7 +253,7 @@ module Rackup
       {
         environment: environment,
         pid: nil,
-        Port: 9292,
+        port: 9292,
         Host: default_host,
         AccessLog: [],
         config: "config.ru"
@@ -456,6 +457,10 @@ module Rackup
       def exit_with_pid(pid)
         $stderr.puts "A server is already running (pid: #{pid}, file: #{options[:pid]})."
         exit(1)
+      end
+
+      def normalize_port_casing(options)
+        options[:port] = options[:port] || options[:Port].delete if options && options.is_a?(Hash)
       end
   end
 
