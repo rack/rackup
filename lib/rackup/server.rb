@@ -460,7 +460,10 @@ module Rackup
       end
 
       def normalize_port_casing(options)
-        options[:port] = options[:port] || options.delete(:Port) if options && options.is_a?(Hash)
+        if options && options.is_a?(Hash)
+          capitalized_port_value = options.delete(:Port)
+          options[:port] = options[:port] || capitalized_port_value
+        end
       end
   end
 
