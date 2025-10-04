@@ -52,9 +52,9 @@ describe Rackup::Server do
     server.app.must_equal "FOO"
   end
 
-  it "Options#parse parses -p and --port options into :Port" do
-    Rackup::Server::Options.new.parse!(%w[-p 1234]).must_equal :Port => '1234'
-    Rackup::Server::Options.new.parse!(%w[--port 1234]).must_equal :Port => '1234'
+  it "Options#parse parses -p and --port options into :port" do
+    Rackup::Server::Options.new.parse!(%w[-p 1234]).must_equal :port => '1234'
+    Rackup::Server::Options.new.parse!(%w[--port 1234]).must_equal :port => '1234'
   end
 
   it "Options#parse parses -D and --daemonize option into :daemonize" do
