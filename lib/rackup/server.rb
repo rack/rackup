@@ -466,9 +466,9 @@ module Rackup
               snakeified_key = snakeify(key).to_sym
               camelized_key = camelize(snakeified_key).to_sym
               normalized_value =
-                if !@options[snakeified_key].nil?
+                if @options.key?(snakeified_key)
                   @options[snakeified_key]
-                elsif !@options[camelized_key].nil?
+                elsif @options.key?(camelized_key)
                   @options[camelized_key]
                 else
                   @options[key]
