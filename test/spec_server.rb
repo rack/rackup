@@ -599,4 +599,41 @@ describe Rackup::Server do
     end
   end
 
+  it "normalize simple (non-camelized) words" do
+    options = {port: 8081}
+    server = Rackup::Server.new(options)
+    server.options[:port].must_equal 8081
+    server.options[:Port].must_equal 8081
+  end
+
+  it "normalize simple (non-camelized) words with snake-case having priority" do
+    options = {port: 8081, Port: 8082}
+    server = Rackup::Server.new(options)
+    server.options[:port].must_equal 8081
+    server.options[:Port].must_equal 8081
+  end
+
+  it "normalizes complex (camelized) words" do
+    options = {SSLEnable: true}
+    server = Rackup::Server.new(options)
+    server.options[:SSLEnable].must_equal true
+    server.options[:ssl_enable].must_equal true
+    server.options[:SslEnable].must_equal true
+  end
+
+  it "normalizes complex (camelized) words with camel-case having priority over actual key" do
+    options = {SSLEnable: true, ssl_enable: false}
+    server = Rackup::Server.new(options)
+    server.options[:SSLEnable].must_equal false
+    server.options[:ssl_enable].must_equal false
+    server.options[:SslEnable].must_equal false
+  end
+
+  it "normalizes complex (camelized) words with snake-case having priority over all" do
+    options = {SSLEnable: true, SslEnable: nil, ssl_enable: false}
+    server = Rackup::Server.new(options)
+    server.options[:SSLEnable].must_equal false
+    server.options[:ssl_enable].must_equal false
+    server.options[:SslEnable].must_equal false
+  end
 end
