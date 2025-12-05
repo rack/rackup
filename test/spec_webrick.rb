@@ -220,6 +220,50 @@ describe Rackup::Handler::WEBrick do
     end
   end
 
+  it "handle OPTIONS * requests through the Rack app" do
+    app = proc do |env|
+      if env["REQUEST_METHOD"] == "OPTIONS" && env["PATH_INFO"] == "*"
+        [200, {"allow" => "GET,HEAD,POST,PUT,DELETE,OPTIONS"}, [""]]
+      else
+        [404, {"content-type" => "text/plain"}, ["Not Found"]]
+      end
+    end
+
+    server = Rackup::Handler::WEBrick::Server.new(
+      app,
+      Host: @host,
+      Port: 9203,
+      Logger: WEBrick::Log.new(nil, WEBrick::BasicLog::WARN),
+      AccessLog: []
+    )
+
+    thread = Thread.new { server.start }
+
+    # Wait for server to start
+    seconds = 10
+    wait_time = 0.1
+    until server.status == :Running || seconds <= 0
+      seconds -= wait_time
+      sleep wait_time
+    end
+
+    begin
+      TCPSocket.open(@host, 9203) do |socket|
+        socket.write "OPTIONS * HTTP/1.1\r\n"
+        socket.write "Host: #{@host}\r\n"
+        socket.write "Connection: close\r\n\r\n"
+
+        response = socket.read
+        response.must_match(/HTTP\/1.1 200/)
+        # The Rack app should set the Allow header, not WEBrick's default
+        response.must_match(/Allow: GET,HEAD,POST,PUT,DELETE,OPTIONS/i)
+      end
+    ensure
+      server.shutdown
+      thread.join
+    end
+  end
+
   after do
     @status_thread.join
     @server.shutdown

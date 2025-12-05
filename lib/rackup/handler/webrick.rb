@@ -16,6 +16,19 @@ require_relative '../stream'
 module Rackup
   module Handler
     class WEBrick < ::WEBrick::HTTPServlet::AbstractServlet
+      # A WEBrick HTTPServer subclass that invokes the Rack app directly,
+      # bypassing the mount table and default OPTIONS * handling.
+      class Server < ::WEBrick::HTTPServer
+        def initialize(app, config)
+          super(config)
+          @handler = Handler::WEBrick.new(self, app)
+        end
+
+        def service(req, res)
+          @handler.service(req, res)
+        end
+      end
+
       def self.run(app, **options)
         environment  = ENV['RACK_ENV'] || 'development'
         default_host = environment == 'development' ? 'localhost' : nil
@@ -28,8 +41,7 @@ module Rackup
           require 'webrick/https'
         end
 
-        @server = ::WEBrick::HTTPServer.new(options)
-        @server.mount "/", Rackup::Handler::WEBrick, app
+        @server = Server.new(app, options)
         yield @server if block_given?
         @server.start
       end
@@ -102,11 +114,25 @@ module Rackup
         )
 
         env[::Rack::QUERY_STRING] ||= ""
-        unless env[::Rack::PATH_INFO] == ""
-          path, n = req.request_uri.path, env[::Rack::SCRIPT_NAME].length
-          env[::Rack::PATH_INFO] = path[n, path.length - n]
+
+        # Handle OPTIONS * requests which have no path
+        if req.unparsed_uri == "*"
+          env[::Rack::PATH_INFO] = "*"
+          env[::Rack::REQUEST_PATH] = "*"
+          
+          # Ensure SERVER_NAME and SERVER_PORT are set from server config
+          # (WEBrick allows these to be nil for OPTIONS * requests)
+          # See https://github.com/ruby/webrick/pull/182 for a proper fix.
+          env[::Rack::SERVER_NAME] ||= @server[:ServerName] || @server[:BindAddress] || "localhost"
+          env[::Rack::SERVER_PORT] ||= (@server[:Port] || 80).to_s
+        else
+          unless env[::Rack::PATH_INFO] == ""
+            # Strip the script name prefix from the path to get path info
+            script_name_length = env[::Rack::SCRIPT_NAME].length
+            env[::Rack::PATH_INFO] = req.request_uri.path[script_name_length..-1] || ""
+          end
+          env[::Rack::REQUEST_PATH] ||= env[::Rack::SCRIPT_NAME] + env[::Rack::PATH_INFO]
         end
-        env[::Rack::REQUEST_PATH] ||= [env[::Rack::SCRIPT_NAME], env[::Rack::PATH_INFO]].join
 
         status, headers, body = @app.call(env)
         begin
