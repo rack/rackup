@@ -66,11 +66,11 @@ module Rackup
           }
 
           opts.on("-o", "--host HOST", "listen on HOST (default: localhost)") { |host|
-            options[:Host] = host
+            options[:host] = host
           }
 
           opts.on("-p", "--port PORT", "use PORT (default: 9292)") { |port|
-            options[:Port] = port
+            options[:port] = port
           }
 
           opts.on("-O", "--option NAME[=VALUE]", "pass VALUE to the server as option NAME. If no VALUE, sets it to true. Run '#{$0} -s SERVER -h' to get a list of options for SERVER") { |name|
@@ -238,6 +238,7 @@ module Rackup
         @use_default_options = true
         @options = parse_options(ARGV)
       end
+      normalize_legacy_options
     end
 
     def options
@@ -252,9 +253,9 @@ module Rackup
       {
         environment: environment,
         pid: nil,
-        Port: 9292,
-        Host: default_host,
-        AccessLog: [],
+        port: 9292,
+        host: default_host,
+        access_log: [],
         config: "config.ru"
       }
     end
@@ -457,6 +458,43 @@ module Rackup
         $stderr.puts "A server is already running (pid: #{pid}, file: #{options[:pid]})."
         exit(1)
       end
-  end
 
+      module LegacyOptionsNormalizer
+        def normalize_legacy_options
+          if @options && @options.is_a?(Hash)
+            @options.keys.each do |key|
+              snakeified_key = snakeify(key).to_sym
+              camelized_key = camelize(snakeified_key).to_sym
+              normalized_value =
+                if @options.key?(snakeified_key)
+                  @options[snakeified_key]
+                elsif @options.key?(camelized_key)
+                  @options[camelized_key]
+                else
+                  @options[key]
+                end
+              @options[key] = @options[camelized_key] = @options[snakeified_key] = normalized_value
+            end
+          end
+        end
+
+        def camelize(lower_case_and_underscored_word, first_letter_in_uppercase = true)
+          if first_letter_in_uppercase
+            lower_case_and_underscored_word.to_s.gsub(/\/(.?)/) { "::#{$1.upcase}" }.gsub(/(?:^|_)(.)/) { $1.upcase }
+          else
+            lower_case_and_underscored_word.first + camelize(lower_case_and_underscored_word)[1..-1]
+          end
+        end
+
+        def snakeify(word)
+          word.to_s.gsub(/::/, '/').
+          gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
+          gsub(/([a-z\d])([A-Z])/,'\1_\2').
+          tr("-", "_").
+          downcase
+        end
+      end
+
+      include LegacyOptionsNormalizer
+  end
 end

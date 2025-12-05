@@ -53,8 +53,8 @@ describe Rackup::Server do
   end
 
   it "Options#parse parses -p and --port options into :Port" do
-    Rackup::Server::Options.new.parse!(%w[-p 1234]).must_equal :Port => '1234'
-    Rackup::Server::Options.new.parse!(%w[--port 1234]).must_equal :Port => '1234'
+    Rackup::Server::Options.new.parse!(%w[-p 1234]).must_equal :port => '1234'
+    Rackup::Server::Options.new.parse!(%w[--port 1234]).must_equal :port => '1234'
   end
 
   it "Options#parse parses -D and --daemonize option into :daemonize" do
@@ -482,9 +482,9 @@ describe Rackup::Server do
     t = Thread.new { server.start { |s| Thread.current[:server] = s } }
     t.join(0.01) until t[:server] && t[:server].status != :Stop
     body = if URI.respond_to?(:open)
-             URI.open("http://localhost:#{server.options[:Port]}/") { |f| f.read }
+             URI.open("http://localhost:#{server.options[:port]}/") { |f| f.read }
            else
-             open("http://localhost:#{server.options[:Port]}/") { |f| f.read }
+             open("http://localhost:#{server.options[:port]}/") { |f| f.read }
            end
     body.must_equal 'success'
 
@@ -512,7 +512,7 @@ describe Rackup::Server do
     t = Thread.new { server.start { |s| Thread.current[:server] = s } }
     t.join(0.01) until t[:server] && t[:server].status != :Stop
 
-    uri = URI.parse("https://localhost:#{server.options[:Port]}/")
+    uri = URI.parse("https://localhost:#{server.options[:port]}/")
 
     Net::HTTP.start("localhost", uri.port, use_ssl: true,
       verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
@@ -599,4 +599,41 @@ describe Rackup::Server do
     end
   end
 
+  it "normalize simple (non-camelized) words" do
+    options = {port: 8081}
+    server = Rackup::Server.new(options)
+    server.options[:port].must_equal 8081
+    server.options[:Port].must_equal 8081
+  end
+
+  it "normalize simple (non-camelized) words with snake-case having priority" do
+    options = {port: 8081, Port: 8082}
+    server = Rackup::Server.new(options)
+    server.options[:port].must_equal 8081
+    server.options[:Port].must_equal 8081
+  end
+
+  it "normalizes complex (camelized) words" do
+    options = {SSLEnable: true}
+    server = Rackup::Server.new(options)
+    server.options[:SSLEnable].must_equal true
+    server.options[:ssl_enable].must_equal true
+    server.options[:SslEnable].must_equal true
+  end
+
+  it "normalizes complex (camelized) words with camel-case having priority over actual key" do
+    options = {SSLEnable: true, ssl_enable: false}
+    server = Rackup::Server.new(options)
+    server.options[:SSLEnable].must_equal false
+    server.options[:ssl_enable].must_equal false
+    server.options[:SslEnable].must_equal false
+  end
+
+  it "normalizes complex (camelized) words with snake-case having priority over all" do
+    options = {SSLEnable: true, SslEnable: nil, ssl_enable: false}
+    server = Rackup::Server.new(options)
+    server.options[:SSLEnable].must_equal false
+    server.options[:ssl_enable].must_equal false
+    server.options[:SslEnable].must_equal false
+  end
 end
