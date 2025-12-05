@@ -119,12 +119,20 @@ module Rackup
         if req.unparsed_uri == "*"
           env[::Rack::PATH_INFO] = "*"
           env[::Rack::REQUEST_PATH] = "*"
-          
-          # Ensure SERVER_NAME and SERVER_PORT are set from server config
+
+          # Ensure SERVER_NAME and SERVER_PORT are set from server config.
           # (WEBrick allows these to be nil for OPTIONS * requests)
           # See https://github.com/ruby/webrick/pull/182 for a proper fix.
-          env[::Rack::SERVER_NAME] ||= @server[:ServerName] || @server[:BindAddress] || "localhost"
-          env[::Rack::SERVER_PORT] ||= (@server[:Port] || 80).to_s
+          server_name = env[::Rack::SERVER_NAME]
+          if server_name.nil? || server_name == ""
+            env[::Rack::SERVER_NAME] = @server[:ServerName] || @server[:BindAddress] || "localhost"
+          end
+
+          # Legacy versions of WEBrick can set server_port to "" in some cases:
+          server_port = env[::Rack::SERVER_PORT]
+          if server_port.nil? || server_port == ""
+            env[::Rack::SERVER_PORT] = (@server[:Port] || 80).to_s
+          end
         else
           unless env[::Rack::PATH_INFO] == ""
             # Strip the script name prefix from the path to get path info

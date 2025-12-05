@@ -230,7 +230,7 @@ describe Rackup::Handler::WEBrick do
     end
 
     server = Rackup::Handler::WEBrick::Server.new(
-      app,
+      Rack::Lint.new(app),
       Host: @host,
       Port: 9203,
       Logger: WEBrick::Log.new(nil, WEBrick::BasicLog::WARN),
